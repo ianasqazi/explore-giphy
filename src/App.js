@@ -1,39 +1,16 @@
+import React, { useState } from 'react';
 
 import { Input, Space } from 'antd';
 import { GifOutlined } from '@ant-design/icons';
 
-import { Grid } from '@giphy/react-components'
+import { Grid, Carousel } from '@giphy/react-components'
 import { GiphyFetch } from '@giphy/js-fetch-api'
 
-import './App.css';
 import 'antd/dist/antd.css';
 
-const gf = new GiphyFetch('BwLH6EekaraNN4YwsuWCmaVrKkbrrPHz');
-
-
-const trending = async () => {
-  try {
-    const result = await gf.trending({ limit: 10, offset: 25, rating: 'g' });
-    console.log(`trending`, result);
-  } catch (error) {
-    console.error(`trending`, error);
-  }
-};
-
-const searchGifs = async () => {
-  try {
-    const result = await gf.search("dogs", { limit: 10, sort: "recent" });
-    console.log(`search`, result);
-  } catch (error) {
-    console.error(`search`, error);
-  }
-};
-
-
-searchGifs();
-trending();
-
 const { Search } = Input;
+
+const gf = new GiphyFetch('BwLH6EekaraNN4YwsuWCmaVrKkbrrPHz');
 
 const suffix = (
   <GifOutlined
@@ -45,26 +22,53 @@ const suffix = (
 );
 
 const onSearch = (value) => {
-  console.log(value)
+  gf.search(value, { limit: 10, sort: "recent" })
 };
 
-
 function App() {
+
+const [query, setQuery] = useState('')
+  
+const fetchGifs = (offset) => gf.trending({ offset, limit: 10 })
+
+const searchGifs = (offset) => gf.search(query, { offset, limit: 10, sort: "trending" })
+
   return (
     <div className="App">
+
+      {/* Search Box Input Field*/}
       <Search
-        placeholder="input search text"
+        placeholder="Search SOAPBOX Giphys"
         enterButton="Search"
         size="large"
         suffix={suffix}
         onSearch={onSearch}
+        onChange={(e) => setQuery(e.target.value)}
         allowClear
       />
       <Space />
+      {/* On Page Load show Carousel */}
+      {
+        query.length == 0 
+        ? 
+        <Carousel
+        fetchGifs={fetchGifs}
+        gutter={8}
+        gifHeight={150}
+        hideAttribution={true}
+        borderRadius={5}
+        />
+        : ''
+      }
+
+      {/* Search Box Results  */}
       <Grid 
+      key={query}
+      gutter={8}
       width={800} 
-      columns={5} 
-      // fetchGifs={trending} 
+      columns={3} 
+      fetchGifs={() =>  searchGifs(5)}
+      borderRadius={5}
       />
     </div>
   );
