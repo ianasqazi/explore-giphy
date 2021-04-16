@@ -1,17 +1,16 @@
 import React from "react";
-import { Row, Col, Input, Space, Result, Card } from 'antd';
+import { Row, Col, Card } from 'antd';
 
 const { Meta } = Card;
 
 function ResultList(props) {
-  console.log('props',  props)
-  return (<><div class='site-card-wrapper'><Row gutter={16}>
+  return (<><div class='site-card-wrapper'><Row gutter={40} align={'center'}>
       {props.results.map((result) => (
-           <Col span={8}><Card
+           <Col><Card
           key={result.id}
           title={result.title}
           hoverable
-          style={{ width: 240 }}
+          style={{ width: 240, height: 350, margin: 10 }}
           cover={<a href={result.url}>
           <img 
           alt={result.title} 

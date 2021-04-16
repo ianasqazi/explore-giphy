@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Row, Col, Input, Space, Result, Card, Tabs} from 'antd';
+import { Row, Col, Input, Space, Result, Tabs } from 'antd';
 import { GifOutlined } from '@ant-design/icons';
 
 import { Grid, Carousel } from '@giphy/react-components'
@@ -8,13 +8,12 @@ import { GiphyFetch } from '@giphy/js-fetch-api';
 
 import ResultList from './components/ResultList';
 import axios from "axios";
-import API from "./utils/API";
 import 'antd/dist/antd.css';
 
-const TRENDINGURL = "https://api.giphy.com/v1/gifs/trending"	
+const TRENDINGURL = "https://api.giphy.com/v1/gifs/trending"
 
 const { Search } = Input;
-const { Meta } = Card;
+const { TabPane } = Tabs;
 
 const gf = new GiphyFetch('BwLH6EekaraNN4YwsuWCmaVrKkbrrPHz');
 
@@ -43,15 +42,15 @@ function App() {
   };
 
 
-  useEffect(() =>{
+  useEffect(() => {
     if (ourGiphys.length <= 0) {
-      axios.get(TRENDINGURL, { params})
-      // API.trending()
-      .then((res) => setOurGiphys(res.data.data))
+      axios.get(TRENDINGURL, { params })
+        // API.trending()
+        .then((res) => setOurGiphys(res.data.data))
         .catch((err) => console.log(err));
-        
     }
-    },[ourGiphys]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ourGiphys]);
 
   const fetchGifs = (offset) => gf.trending({ offset, limit: 10 })
 
@@ -60,60 +59,99 @@ function App() {
 
   return (
     <div className="App">
-      <h1>
-        Anas
-      </h1>
-      <Row> 
-      <Col span={8} />
-        <Col span={8}>
-          {/* Search Box Input Field*/}
-          <Search
-            placeholder="Search SOAPBOX Giphys"
-            enterButton="Search"
-            size="large"
-            suffix={suffix}
-            onSearch={onSearch}
-            onChange={(e) => setQuery(e.target.value)}
-            allowClear
-          />
-          <Space />
+
+      {/* Headers  */}
+      <Row>
+        <Col span={24} align='center'
+          style={{ marginTop: '30px' }}>
+          <h1>SOAPBOX x GIPHY</h1>
         </Col>
-        <Col span={8}/>
       </Row>
-<Row align={'center'} gutter={40}>
-  <Col span={12}>
-  <ResultList results={ourGiphys} />
-  </Col>
-</Row>
-      
 
-      {/* On Page Load show Carousel */}
-      {/* { query.length === 0 
-        ? 
-        <Carousel
-        fetchGifs={fetchGifs}
-        gutter={8}
-        gifHeight={150}
-        hideAttribution={true}
-        borderRadius={5}
-        />
-        : '' } */}
 
-      {/* Search Box Results  */}
-      {/* <Grid 
-        key={query}
-        gutter={8}
-        width={800} 
-        columns={3} 
-        fetchGifs={() => searchGifs(5)}
-        borderRadius={5}
-        noResultsMessage={<Result
-          status="404"
-          title="No Results found"
-          subTitle="Sorry, the page you visited does not exist."
-        />}
-      /> */}
+      {/* Tabs  */}
+      <Row>
+        <Col span={24}  >
 
+        <Tabs defaultActiveKey="1" centered>
+
+          <TabPane tab="Using CSS Library - Ant Design" key="1">
+            <Row align={'center'} gutter={20}>
+
+              <Col span={24} align='center'
+                style={{ marginTop: '30px' }}>
+                <h3>Top trending GIPHYS </h3>
+              </Col>
+
+              <Col span={20}>
+                <ResultList results={ourGiphys} />
+              </Col>
+            </Row>
+          </TabPane>
+
+          <TabPane tab="Using fetchGiphy and searchGiphy" key="2">
+            <Row align='center'>
+              {/* SEARCH BOX  */}
+              <Col span={8} />
+              <Col span={8}>
+                <Search
+                  placeholder="Search SOAPBOX Giphys"
+                  enterButton="Search"
+                  size="large"
+                  suffix={suffix}
+                  onSearch={onSearch}
+                  onChange={(e) => setQuery(e.target.value)}
+                  allowClear
+                />
+                <Space />
+              </Col>
+              <Col span={8} />
+            </Row>
+            <Row align='center'>
+              {query.length === 0
+                ?
+                <><br /><br />
+                <Carousel
+                  fetchGifs={fetchGifs}
+                  gutter={8}
+                  gifHeight={150}
+                  hideAttribution={true}
+                  borderRadius={5}
+                />ƒ
+                </> 
+                : 
+                <><br /><br />
+                <Grid
+                key={query}
+                gutter={8}
+                width={800}
+                columns={3}
+                fetchGifs={() => searchGifs(5)}
+                borderRadius={5}
+                noResultsMessage={<Result
+                  status="404"
+                  title="No Results found"
+                  subTitle="Sorry, No results found for the searched keyword"
+                />}
+              />
+              </>
+              }
+            </Row>
+
+
+
+          </TabPane>
+          
+        </Tabs>
+        </Col>
+      </Row>
+
+
+
+
+
+
+    
 
     </div>
   );
